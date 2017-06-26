@@ -1,0 +1,19 @@
+{
+  "name": "axel-wiki",
+  "version": "0.0.1",
+  "description": "Simple and fast wiki server",
+  "main": "main.js",
+  "scripts": {
+    "test": "node main.js"
+  },
+  "author": "Axel",
+  "license": "ISC",
+  "dependencies": {
+    "babel-core": "^6.25.0",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "co": "^4.6.0",
+    "js-yaml": "^3.8.4",
+    "mz": "^2.6.0"
+  }
+}
