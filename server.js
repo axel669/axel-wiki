@@ -4,9 +4,6 @@ import http from 'http';
 import fs from 'mz/fs';
 import yaml from 'js-yaml';
 
-// const fs = require('mz/fs');
-// const http = require('http');
-
 const fileResponse = async (fileName, response, fileType = null) => {
     const fileContent = await fs.readFile(fileName);
     fileType = fileType || "text/plain";
@@ -146,6 +143,8 @@ const app = {
             test = url => url === route;
         }
         addRoute('post', test, handle);
+    },
+    static(route, directory = null) {
     },
     use(mw) {
         middleWare.push(mw);
