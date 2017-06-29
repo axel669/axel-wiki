@@ -26,4 +26,6 @@ app.get(
     }
 );
 
+app.static('/testing', 'static');
+
 app.start();

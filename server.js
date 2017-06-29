@@ -1,8 +1,12 @@
 import url from 'url';
 import http from 'http';
+import path from 'path';
 
 import fs from 'mz/fs';
 import yaml from 'js-yaml';
+import mime from 'mime';
+
+const serverLocation = process.cwd();
 
 const fileResponse = async (fileName, response, fileType = null) => {
     const fileContent = await fs.readFile(fileName);
@@ -71,6 +75,15 @@ const Context = (request, response) => {
                     'content-type': 'application/json'
                 },
                 content: JSON.stringify(data)
+            });
+        },
+        send404(message = "Not the page you're looking for", mimeType = 'text/plain') {
+            return sendReponse({
+                code: 404,
+                headers: {
+                    'content-type': mimeType
+                },
+                content: message
             });
         },
         query: urlInfo.query
@@ -144,7 +157,33 @@ const app = {
         }
         addRoute('post', test, handle);
     },
-    static(route, directory = null) {
+    static(route, directory = '') {
+        const testURL = route + '/';
+        const replaceRegex = new RegExp(`^${route}`);
+
+        addRoute(
+            'get',
+            url => url.slice(0, testURL.length) === testURL,
+            async (context) => {
+                const filePath = path.resolve(
+                    serverLocation,
+                    context.path.replace(
+                        replaceRegex,
+                        directory
+                    )
+                );
+
+                console.log(filePath);
+                context.send404();
+
+                // context.sendReponse({
+                //     code: 200,
+                //     headers: {
+                //     },
+                //     content: 'hi'
+                // });
+            }
+        );
     },
     use(mw) {
         middleWare.push(mw);
