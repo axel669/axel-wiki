@@ -38,6 +38,15 @@ const Context = (request, response) => {
             }
         );
     };
+    const send404 = (message = "Not the page you're looking for", mimeType = 'text/plain') => {
+        return sendReponse({
+            code: 404,
+            headers: {
+                'content-type': mimeType
+            },
+            content: message
+        });
+    };
 
     return {
         request,
@@ -49,7 +58,11 @@ const Context = (request, response) => {
             return finished || response.finished;
         },
         async sendFile(fileName, fileType = null) {
-            await fileResponse(fileName, response, fileType);
+            try {
+                await fileResponse(fileName, response, fileType);
+            } catch (error) {
+                send404();
+            }
         },
         get path() {
             return urlInfo.pathname;
@@ -67,6 +80,7 @@ const Context = (request, response) => {
             return rawPostData;
         },
         sendReponse,
+        send404,
         sendJSON (data, headers = {}) {
             return sendReponse({
                 code: 200,
@@ -75,15 +89,6 @@ const Context = (request, response) => {
                     'content-type': 'application/json'
                 },
                 content: JSON.stringify(data)
-            });
-        },
-        send404(message = "Not the page you're looking for", mimeType = 'text/plain') {
-            return sendReponse({
-                code: 404,
-                headers: {
-                    'content-type': mimeType
-                },
-                content: message
             });
         },
         query: urlInfo.query
@@ -173,15 +178,7 @@ const app = {
                     )
                 );
 
-                console.log(filePath);
-                context.send404();
-
-                // context.sendReponse({
-                //     code: 200,
-                //     headers: {
-                //     },
-                //     content: 'hi'
-                // });
+                context.sendFile(filePath);
             }
         );
     },
